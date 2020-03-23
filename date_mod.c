@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <time.h>
-#include <unistd.h>
 #include <ev.h>
 
 #define MAX_SIZE 64
