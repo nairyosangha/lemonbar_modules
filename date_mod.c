@@ -16,7 +16,7 @@ int seconds_til_minute() {
 void print_time() {
 	char output[MAX_SIZE];
 	time(&rawtime);
-	strftime(output, MAX_SIZE, "S%a %e/%g - %H:%M", localtime(&rawtime));
+	strftime(output, MAX_SIZE, "S%a %e/%m - %H:%M", localtime(&rawtime));
 	printf("%s\n", output);
 	fflush(stdout);
 }
