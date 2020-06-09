@@ -13,15 +13,21 @@ DATE_MOD_SRC	:= date_mod.c
 DATE_MOD_OBJ 	:= $(DATE_MOD_SRC:.c=.o)
 DISK_MOD_SRC	:= disk_usage_mod.c
 DISK_MOD_OBJ 	:= $(DISK_MOD_SRC:.c=.o)
+IP_MOD_SRC		:= ip_mod.c
+IP_MOD_OBJ 		:= $(IP_MOD_SRC:.c=.o)
 VALG 		:= $(wildcard vgcore.*)
 
-all: 		bm_date_mod bm_disk_mod
+all: 		bm_date_mod bm_disk_mod bm_ip_mod
 
 $(OBJ): 	Makefile 
 
 bm_date_mod: 	$(DATE_MOD_OBJ)
 				@mkdir -p build
 				$(CC) $(LIBS) -o build/$@ $(DATE_MOD_OBJ)
+
+bm_ip_mod: 		$(IP_MOD_OBJ)
+				@mkdir -p build
+				$(CC) $(LIBS) -o build/$@ $(IP_MOD_OBJ)
 
 bm_disk_mod: 	$(DISK_MOD_OBJ)
 				@mkdir -p build
@@ -31,12 +37,14 @@ install:
 	mkdir -p "$(DESTDIR)$(BINPREFIX)"
 	cp -p build/bm_date_mod "$(DESTDIR)$(BINPREFIX)"
 	cp -p build/bm_disk_mod "$(DESTDIR)$(BINPREFIX)"
+	cp -p build/bm_ip_mod 	"$(DESTDIR)$(BINPREFIX)"
 
 uninstall:
 	rm -f "$(DESTDIR)$(BINPREFIX)/bm_date_mod"
 	rm -f "$(DESTDIR)$(BINPREFIX)/bm_disk_mod"
+	rm -f "$(DESTDIR)$(BINPREFIX)/bm_ip_mod"
 
 clean: 	
-	rm -rf build/ $(DISK_MOD_OBJ) $(DATE_MOD_OBJ) $(VALG)
+	rm -rf build/ $(DISK_MOD_OBJ) $(DATE_MOD_OBJ) $(IP_MOD_OBJ) $(VALG)
 
 
