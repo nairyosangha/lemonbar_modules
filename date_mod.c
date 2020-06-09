@@ -32,7 +32,7 @@ static void timer_cb(EV_P_ ev_timer *timer, int r)
 
 int main() 
 {
-	int offset = seconds_til_minute();
+	unsigned int offset = seconds_til_minute();
 	print_time();
 	struct ev_loop *loop = EV_DEFAULT;
 	ev_timer_init (&timer, timer_cb, offset, 0.);

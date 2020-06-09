@@ -25,7 +25,7 @@ int approved_mnttype(char *mount_type, int len)
 	return 1;
 }
 
-void blocks_to_readable_bytesize(double *converted_bytes, int *fmt_index, unsigned long total_bytes) 
+void get_human_readable_size(double *converted_bytes, int *fmt_index, unsigned long total_bytes) 
 {
 	int scale = ceil(log10(total_bytes)); // rounded up amount of digits
 	scale += scale % 3 == 0 ? 0 : (3 - scale % 3); // conv amt of digits to a power of 3, so we can determine whether dealing with MB, GB, TB
@@ -54,15 +54,15 @@ void get_sizes(unsigned int output)
 	
 	double converted_bytes; int identifier;
 	if (output & FREE) {
-		blocks_to_readable_bytesize(&converted_bytes, &identifier, bytes_free);
+		get_human_readable_size(&converted_bytes, &identifier, bytes_free);
 		printf("D %s %.2f %s free\n", disk_icon, converted_bytes, size_fmt[identifier]);
 	}
 	if (output & USED) {
-		blocks_to_readable_bytesize(&converted_bytes, &identifier, bytes_used);
+		get_human_readable_size(&converted_bytes, &identifier, bytes_used);
 		printf("D%.2f %s used\n", converted_bytes, size_fmt[identifier]);
 	}
 	if (output & TOTAL) {
-		blocks_to_readable_bytesize(&converted_bytes, &identifier, total_bytes);
+		get_human_readable_size(&converted_bytes, &identifier, total_bytes);
 		printf("D%.2f %s total\n", converted_bytes, size_fmt[identifier]);
 	}
 	fflush(stdout);
