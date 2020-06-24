@@ -18,6 +18,12 @@ char cur_host[MAXLEN];
 char wifi_icon[] = "\uf1eb "; 
 char eth_icon[] = "ETH ";
 
+struct pack {
+	char *iface;
+	char *gateway;
+	int metric;
+};
+
 
 // https://gist.github.com/edufelipe/6108057
 int check_wireless(const char* ifname) {
@@ -71,14 +77,24 @@ void get_addresses() {
 	FILE *f = fopen("/proc/net/route", "r");
 	if (!f) return;
 
-	char iface[MAXLEN], gateway[MAXLEN], tmp[MAXLEN];
-	fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
-	while(fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp) == 11) {
+	struct pack pack_[2] = {{ "", "", 1000 }, { "", "", 1000}}; // only saving 2, wireless and wired
+	char iface[MAXLEN], gateway[MAXLEN], metric[MAXLEN], tmp[MAXLEN];
+	fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, metric, tmp, tmp, tmp, tmp);
+	while(fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, metric, tmp, tmp, tmp, tmp) == 11) {
 		if (gateway_not_NULL(gateway)) {
-			if (strnlen(output, MAXLEN) != 2) strcat(output, " | ");
-			strncat(output, check_wireless(iface) ? wifi_icon : eth_icon, MAXLEN);
-			strncat(output, get_IP_for_iface(iface) ? cur_host : "NULL", MAXLEN);
+			int wifi_bool = check_wireless(iface);
+			if (pack_[wifi_bool].metric < atoi(metric)) continue; // saving best metric
+			pack_[wifi_bool].iface = strndup(iface, MAXLEN);
+			pack_[wifi_bool].gateway = strndup(gateway, MAXLEN);
+			pack_[wifi_bool].metric = atoi(metric);
 		}
+	}
+	for (int i = 0; i < 2; i++) {
+		//printf("%d: (%s,%s,%d)\tggetwifi? %d\n", i, pack_[i].gateway, pack_[i].iface, pack_[i].metric, check_wireless(pack_[i].iface));
+		if (pack_[i].metric == 1000) continue;
+		if (strnlen(output, MAXLEN) != 2) strcat(output, " | ");
+		strncat(output, i % 2 == 0 ? eth_icon : wifi_icon , MAXLEN);
+		strncat(output, get_IP_for_iface(pack_[i].iface) ? cur_host : "NULL", MAXLEN); // get_IP_for_iface saves ret value in global var cur_host
 	}
 
 	fclose(f);

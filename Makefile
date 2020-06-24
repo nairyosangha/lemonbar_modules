@@ -4,6 +4,7 @@ LIBS 		:= -lev -lm
 	
 PREFIX    	:= /usr/local
 BINPREFIX 	:= $(PREFIX)/bin
+MODULES 	:= bm_date_mod bm_disk_mod bm_ip_mod
 
 ifeq ($(DEBUG),1)
 	CFLAGS+=-DDEBUG -g
@@ -15,9 +16,9 @@ DISK_MOD_SRC	:= disk_usage_mod.c
 DISK_MOD_OBJ 	:= $(DISK_MOD_SRC:.c=.o)
 IP_MOD_SRC		:= ip_mod.c
 IP_MOD_OBJ 		:= $(IP_MOD_SRC:.c=.o)
-VALG 		:= $(wildcard vgcore.*)
+VALG 			:= $(wildcard vgcore.*)
 
-all: 		bm_date_mod bm_disk_mod bm_ip_mod
+all: 		$(MODULES)
 
 $(OBJ): 	Makefile 
 
@@ -35,14 +36,10 @@ bm_disk_mod: 	$(DISK_MOD_OBJ)
 
 install: 
 	mkdir -p "$(DESTDIR)$(BINPREFIX)"
-	cp -p build/bm_date_mod "$(DESTDIR)$(BINPREFIX)"
-	cp -p build/bm_disk_mod "$(DESTDIR)$(BINPREFIX)"
-	cp -p build/bm_ip_mod 	"$(DESTDIR)$(BINPREFIX)"
+	for dir in $(MODULES); do install build/$$dir "$(DESTDIR)$(BINPREFIX)"; done
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINPREFIX)/bm_date_mod"
-	rm -f "$(DESTDIR)$(BINPREFIX)/bm_disk_mod"
-	rm -f "$(DESTDIR)$(BINPREFIX)/bm_ip_mod"
+	for dir in $(MODULES); do rm -f "$(DESTDIR)$(BINPREFIX)/$$dir"; done
 
 clean: 	
 	rm -rf build/ $(DISK_MOD_OBJ) $(DATE_MOD_OBJ) $(IP_MOD_OBJ) $(VALG)
