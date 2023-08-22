@@ -18,13 +18,13 @@ VALG 		:= $(wildcard vgcore.*)
 all: 			$(MODULES)
 
 bm_date_mod: 	prep 
-	$(CC) $(LIBS) -o build/$@ $(DATE_SRC)
+	$(CC) $(CFLAGS) $(LIBS) -o build/$@ $(DATE_SRC)
 
 bm_disk_mod: 	prep 
-	$(CC) $(LIBS) -o build/$@ $(DISK_SRC)
+	$(CC) $(CFLAGS) $(LIBS) -o build/$@ $(DISK_SRC)
 
 bm_ip_mod: 		prep 
-	$(CC) $(LIBS) -o build/$@ $(IP_SRC)
+	$(CC) $(CFLAGS) $(LIBS) -o build/$@ $(IP_SRC)
 
 install: 
 	mkdir -p "$(DESTDIR)$(BINPREFIX)"
