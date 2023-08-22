@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <ifaddrs.h>
 #include <unistd.h>
@@ -21,7 +22,7 @@ char eth_icon[] = "ETH ";
 struct pack {
 	char *iface;
 	char *gateway;
-	int metric;
+	uint16_t metric;
 };
 
 
@@ -77,7 +78,7 @@ void get_addresses() {
 	FILE *f = fopen("/proc/net/route", "r");
 	if (!f) return;
 
-	struct pack pack_[2] = {{ "", "", 1000 }, { "", "", 1000}}; // only saving 2, wireless and wired
+	struct pack pack_[2] = {{ "", "", UINT16_MAX }, { "", "", UINT16_MAX }}; // only saving 2, wireless and wired
 	char iface[MAXLEN], gateway[MAXLEN], metric[MAXLEN], tmp[MAXLEN];
 	fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, metric, tmp, tmp, tmp, tmp);
 	while(fscanf(f, "%s%s%s%s%s%s%s%s%s%s%s\n", iface, tmp, gateway, tmp, tmp, tmp, metric, tmp, tmp, tmp, tmp) == 11) {
